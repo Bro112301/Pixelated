@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function drawPixel(event) {
         const index = Array.from(canvas.children).indexOf(event.target);
-        const gistId = 'e260ab1fd24d0f76861f5f76d469254c.js'; // Replace with your gist ID
+        const gistId = 'e260ab1fd24d0f76861f5f76d469254c'; // Replace with your gist ID
         const drawingData = getDrawingData();
         
         // Update the gist with the new drawing data
@@ -47,8 +47,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function loadDrawing() {
-        const gistId = 'e260ab1fd24d0f76861f5f76d469254c.js'; // Replace with your gist ID
-        fetch(`https://api.github.com/gists/${gistId}`)
+        const gistId = 'e260ab1fd24d0f76861f5f76d469254c'; // Replace with your gist ID
+        fetch(`https://api.github.com/gists/e260ab1fd24d0f76861f5f76d469254c`)
             .then(response => response.json())
             .then(data => {
                 const drawingData = JSON.parse(data.files['drawing.json'].content);
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function updateGist(gistId, drawingData) {
-        const gistUrl = `https://api.github.com/gists/${gistId}`;
+        const gistUrl = `https://api.github.com/gists/e260ab1fd24d0f76861f5f76d469254c`;
         fetch(gistUrl, {
             method: 'PATCH',
             headers: {
