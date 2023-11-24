@@ -14,6 +14,9 @@ document.addEventListener('DOMContentLoaded', function () {
         colorPicker.appendChild(colorDiv);
     });
 
+    // Load the drawing from the gist
+    loadDrawing();
+
     // Create the initial canvas grid
     for (let i = 0; i < 10000; i++) {
         const pixel = document.createElement('div');
@@ -23,10 +26,61 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function drawPixel(event) {
+        const index = Array.from(canvas.children).indexOf(event.target);
+        const gistId = 'YOUR_GIST_ID'; // Replace with your gist ID
+        const drawingData = getDrawingData();
+        
+        // Update the gist with the new drawing data
+        updateGist(gistId, drawingData);
+
         event.target.style.backgroundColor = selectedColor;
     }
 
     function selectColor(color) {
         selectedColor = color;
+    }
+
+    function getDrawingData() {
+        return Array.from(canvas.children).map(pixel => {
+            return pixel.style.backgroundColor || 'white';
+        });
+    }
+
+    function loadDrawing() {
+        const gistId = 'YOUR_GIST_ID'; // Replace with your gist ID
+        fetch(`https://api.github.com/gists/${gistId}`)
+            .then(response => response.json())
+            .then(data => {
+                const drawingData = JSON.parse(data.files['drawing.json'].content);
+                applyDrawing(drawingData);
+            })
+            .catch(error => console.error('Error loading drawing:', error));
+    }
+
+    function applyDrawing(drawingData) {
+        const pixels = Array.from(canvas.children);
+        drawingData.forEach((color, index) => {
+            pixels[index].style.backgroundColor = color;
+        });
+    }
+
+    function updateGist(gistId, drawingData) {
+        const gistUrl = `https://api.github.com/gists/${gistId}`;
+        fetch(gistUrl, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                files: {
+                    'drawing.json': {
+                        content: JSON.stringify(drawingData),
+                    },
+                },
+            }),
+        })
+            .then(response => response.json())
+            .then(data => console.log('Gist updated successfully:', data))
+            .catch(error => console.error('Error updating gist:', error));
     }
 });
